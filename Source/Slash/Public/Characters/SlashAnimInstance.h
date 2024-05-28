@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "CharacterTypes.h"
 #include "SlashAnimInstance.generated.h"
 
 class ASlashCharacter;
 class UCharacterMovementComponent;
-
 
 UCLASS()
 class SLASH_API USlashAnimInstance : public UAnimInstance
@@ -30,5 +30,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 	bool IsFalling;
-	
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement | Character State")
+	ECharacterState CharacterState;
 };
