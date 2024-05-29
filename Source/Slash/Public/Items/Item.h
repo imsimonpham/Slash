@@ -45,10 +45,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* ItemMesh;
 
+	EItemState ItemState = EItemState::EIS_Hovering;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USphereComponent* Sphere;
-
-	EItemState ItemState = EItemState::EIS_Hovering;
 	
 private:
 		UPROPERTY(VisibleAnywhere)

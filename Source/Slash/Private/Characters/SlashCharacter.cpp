@@ -51,12 +51,13 @@ void ASlashCharacter::BeginPlay()
 void ASlashCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	UE_LOG(LogTemp, Warning, TEXT("This is a simple message."));
 }
 
+#pragma region Movement and Look
 void ASlashCharacter::MoveForward(float Value)
 {
-	if (ActionState == EActionState::EAS_Attacking) return;
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 	if (Controller && (Value != 0))
 	{
 		//find out which way is forward
@@ -71,7 +72,7 @@ void ASlashCharacter::MoveForward(float Value)
 
 void ASlashCharacter::MoveRight(float Value)
 {
-	if (ActionState == EActionState::EAS_Attacking) return;
+	if (ActionState != EActionState::EAS_Unoccupied) return;
 	if (Controller && (Value != 0))
 	{
 		//find out which way is right
@@ -94,6 +95,9 @@ void ASlashCharacter::LookUp(float Value)
 	AddControllerPitchInput(Value);
 }
 
+#pragma endregion Movement and Look
+
+#pragma region Equip and Attack
 void ASlashCharacter::EKeyPressed()
 {
 	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
@@ -110,12 +114,14 @@ void ASlashCharacter::EKeyPressed()
 		{
 			PlayArmingMontage(FName("Unarm"));
 			CharacterState = ECharacterState::ECS_Unequipped;
+			ActionState = EActionState::EAS_EquippingWeapon;
 		}
 
 		else if (CanArm())
 		{
 			PlayArmingMontage(FName("Arm"));
 			CharacterState = ECharacterState::ECS_EquippedOneHandedWeapon;
+			ActionState = EActionState::EAS_EquippingWeapon;
 		}
 	}
 }
@@ -183,6 +189,30 @@ bool ASlashCharacter::CanArm()
 		CharacterState == ECharacterState::ECS_Unequipped &&
 		EquippedWeapon;
 }
+
+void ASlashCharacter::Unarm()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("NeckSocket"));
+	}
+}
+
+void ASlashCharacter::Arm()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->AttachMeshToSocket(GetMesh(), FName("RightHandSocket"));
+	}
+}
+
+void ASlashCharacter::FinishArmingOrDisarming()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
+
+#pragma endregion Equip and Attack
 
 void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
