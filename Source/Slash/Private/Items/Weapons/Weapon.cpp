@@ -7,10 +7,14 @@
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Interfaces/HitInterface.h"
 
 AWeapon::AWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	//Initialize variables
+	EquipSound = nullptr;
 
 	//Create weapon box and configure its collision settings
 	WeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Weapon Box"));
@@ -25,8 +29,6 @@ AWeapon::AWeapon()
 	BoxTraceStart->SetupAttachment(GetRootComponent());
 	BoxTraceEnd->SetupAttachment(GetRootComponent());
 
-	//Initialize variables
-	EquipSound = nullptr;
 }
 
 void AWeapon::BeginPlay()
@@ -94,4 +96,13 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		BoxHit,
 		true
 	);
+
+	if (BoxHit.GetActor())
+	{
+		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
+		if (HitInterface)
+		{
+			HitInterface->GetHit(BoxHit.ImpactPoint);
+		}
+	}
 }

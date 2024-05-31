@@ -15,6 +15,12 @@ ASlashCharacter::ASlashCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Initialize Variables
+	AttackMontage = nullptr;
+	EquipMontage = nullptr;
+	OverlappingItem = nullptr;
+	EquippedWeapon = nullptr;
+
 	//Use Controller
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -35,12 +41,6 @@ ASlashCharacter::ASlashCharacter()
 
 	//Set auto player
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
-
-	//Initialize Variables
-	AttackMontage = nullptr;
-	EquipMontage = nullptr;
-	OverlappingItem = nullptr;
-	EquippedWeapon = nullptr;
 }
 
 void ASlashCharacter::BeginPlay()
@@ -156,7 +156,7 @@ void ASlashCharacter::PlayAttackMontage()
 	}
 }
 
-void ASlashCharacter::PlayArmingMontage(FName SectionName)
+void ASlashCharacter::PlayArmingMontage(const FName& SectionName)
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && EquipMontage)
@@ -211,6 +211,13 @@ void ASlashCharacter::FinishArmingOrDisarming()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
+void ASlashCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
+{
+	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
+	{
+		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
+	}
+}
 
 #pragma endregion Equip and Attack
 
@@ -228,12 +235,6 @@ void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ASlashCharacter::Attack);
 }
 
-void ASlashCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
-{
-	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
-	{
-		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
-	}
-}
+
 
 

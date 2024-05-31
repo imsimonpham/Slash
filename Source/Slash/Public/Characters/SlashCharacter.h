@@ -42,7 +42,7 @@ protected:
 	
 	//Play Montage functions
 	void PlayAttackMontage();
-	void PlayArmingMontage(FName SectionName);
+	void PlayArmingMontage(const FName& SectionName);
 
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
