@@ -20,5 +20,7 @@ class SLASH_API IHitInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void GetHit(const FVector& ImpactPoint) = 0; // = 0 means that this function can only be defined in a class that inherits from it
+	UFUNCTION(BlueprintNativeEvent)
+	void GetHit(const FVector& ImpactPoint); 
+	// virtual void GetHit(const FVector& ImpactPoint) = 0 => "= 0" means that this function can only be defined in a class that inherits from it
 };

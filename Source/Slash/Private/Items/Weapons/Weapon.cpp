@@ -79,7 +79,12 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	const FVector End = BoxTraceEnd->GetComponentLocation();
 
 	TArray<AActor*>ActorsToIgnore;
-	ActorsToIgnore.Add(this);
+	ActorsToIgnore.Add(this);//ignore this weapon
+
+	for (AActor* Actor : IgnoredActors)
+	{
+		ActorsToIgnore.AddUnique(Actor);
+	}
 
 	FHitResult BoxHit;
 
@@ -92,17 +97,20 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		ETraceTypeQuery::TraceTypeQuery1,
 		false,
 		ActorsToIgnore,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		BoxHit,
 		true
 	);
 
 	if (BoxHit.GetActor())
-	{
+	{	
 		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
 		if (HitInterface)
 		{
-			HitInterface->GetHit(BoxHit.ImpactPoint);
+			HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint); //Execute_ prefix is added to make interface work in blueprint
 		}
+		IgnoredActors.AddUnique(BoxHit.GetActor());
+
+		CreateFields(BoxHit.ImpactPoint);
 	}
 }

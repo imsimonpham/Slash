@@ -7,6 +7,7 @@
 #include "Slash/DebugMacros.h"
 #include "Animation/AnimMontage.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -15,6 +16,9 @@ AEnemy::AEnemy()
 
 	//Initialize variables
 	HitReactMontage = nullptr;
+	HitSound = nullptr;
+	HitParticles = nullptr;
+
 
 	//Configure mesh collision
 	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
@@ -52,10 +56,22 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AEnemy::GetHit(const FVector& ImpactPoint)
+void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
-	DRAW_SPHERE(ImpactPoint,FColor::Purple);
+	/*DRAW_SPHERE(ImpactPoint,FColor::Purple);*/
+	DirectionalHitReact(ImpactPoint);
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, ImpactPoint);
+	}
+	if (HitParticles && GetWorld())
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticles, ImpactPoint);
+	}
+}
 
+void AEnemy::DirectionalHitReact(const FVector& ImpactPoint)
+{
 	const FVector Forward = GetActorForwardVector();
 	// lower Impact Point to the enemy's actor location z so the two vectors are parallel
 	const FVector ImpactLowered(ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z);
@@ -73,7 +89,7 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 	const FVector CrossProduct = FVector::CrossProduct(Forward, ToHit);
 	if (CrossProduct.Z < 0)
 	{
-		Alpha *= -1.f;	
+		Alpha *= -1.f;
 	}
 
 	FName Section("FromBack");
@@ -94,13 +110,13 @@ void AEnemy::GetHit(const FVector& ImpactPoint)
 	PlayHitReactMontage(FName(Section));
 
 	//Debug
-	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100.f, 10.f, FColor::Blue, 5.f);
+	/*UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + CrossProduct * 100.f, 10.f, FColor::Blue, 5.f);
 
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Green, FString::Printf(TEXT("The hit angle is: %f and Section is %s"), Alpha, *Section.ToString()));
 	}
 	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + Forward * 60.f, 10.f, FColor::Red, 5.f);
-	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit * 60.f, 10.f, FColor::Green, 5.f);
+	UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() + ToHit * 60.f, 10.f, FColor::Green, 5.f);*/
 }
 
