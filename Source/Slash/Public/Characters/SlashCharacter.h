@@ -21,7 +21,7 @@ class SLASH_API ASlashCharacter : public ACharacter
 
 public:
 	ASlashCharacter();
-	virtual void Tick(float DeltaTime) override;
+	/*virtual void Tick(float DeltaTime) override;*/
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//weapon collision
@@ -30,7 +30,7 @@ public:
 
 	
 protected:
-	virtual void BeginPlay() override;
+	/*virtual void BeginPlay() override;*/
 
 	// Callbacks for input
 	void MoveForward(float Value);

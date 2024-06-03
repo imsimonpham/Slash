@@ -21,8 +21,8 @@ AItem::AItem()
 	Sphere->SetupAttachment(GetRootComponent());
 
 	//add niagara effect
-	EmbersEffects = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Embers"));
-	EmbersEffects->SetupAttachment(GetRootComponent());
+	EmbersEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Embers"));
+	EmbersEffect->SetupAttachment(GetRootComponent());
 }
 
 void AItem::BeginPlay()

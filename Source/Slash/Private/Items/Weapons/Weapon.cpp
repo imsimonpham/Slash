@@ -39,9 +39,13 @@ void AWeapon::BeginPlay()
 	WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnBoxOverlap);
 }
 
-void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
+void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator)
 {
+	SetOwner(NewOwner);
+	SetInstigator(NewInstigator);
+
 	AttachMeshToSocket(InParent, InSocketName);
+
 	ItemState = EItemState::EIS_Equipped;
 	if (EquipSound)
 	{
@@ -108,15 +112,30 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		true
 	);
 
-	if (BoxHit.GetActor())
+	AActor* HitActor = BoxHit.GetActor();
+
+	if (HitActor)
 	{	
-		IHitInterface* HitInterface = Cast<IHitInterface>(BoxHit.GetActor());
+		//cause damage
+		UGameplayStatics::ApplyDamage(
+			HitActor,
+			Damage,
+			GetInstigator()->GetController(),
+			this,
+			UDamageType::StaticClass()
+		);
+
+		//hit interface
+		IHitInterface* HitInterface = Cast<IHitInterface>(HitActor);
 		if (HitInterface)
 		{
-			HitInterface->Execute_GetHit(BoxHit.GetActor(), BoxHit.ImpactPoint); //Execute_ prefix is added to make interface work in blueprint
+			HitInterface->Execute_GetHit(HitActor, BoxHit.ImpactPoint); //Execute_ prefix is added to make interface work in blueprint
 		}
-		IgnoredActors.AddUnique(BoxHit.GetActor());
 
+		//uniquely add actor to the IgnoredActors array
+		IgnoredActors.AddUnique(HitActor);
+
+		//create fields to shatter breakables
 		CreateFields(BoxHit.ImpactPoint);
 	}
 }

@@ -51,7 +51,7 @@ protected:
 	USphereComponent* Sphere;
 
 	UPROPERTY(EditAnywhere)
-	UNiagaraComponent* EmbersEffects;
+	UNiagaraComponent* EmbersEffect;
 	
 private:
 		UPROPERTY(VisibleAnywhere)
