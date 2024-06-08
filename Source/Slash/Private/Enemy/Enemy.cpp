@@ -12,6 +12,9 @@
 #include "HUD/HealthBarComponent.h"
 #include "Characters/Charactertypes.h"
 #include "Engine/EngineTypes.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "AIController.h"
+#include "Navigation/PathFollowingComponent.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -36,6 +39,12 @@ AEnemy::AEnemy()
 	//Create subobject for widget component
 	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>(TEXT("HealthBar"));
 	HealthBarWidget->SetupAttachment(GetRootComponent());
+
+	//Movement
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
 }
 
 void AEnemy::BeginPlay()
@@ -46,6 +55,22 @@ void AEnemy::BeginPlay()
 	{
 		HealthBarWidget->SetVisibility(false);
 	}
+
+	/*EnemyController = Cast<AAIController>(GetController());
+	if (EnemyController && PatrolTarget)
+	{
+		FAIMoveRequest MoveRequest;
+		MoveRequest.SetGoalActor(PatrolTarget);
+		MoveRequest.SetAcceptanceRadius(15.f);
+		FNavPathSharedPtr NavPath;
+		EnemyController->MoveTo(MoveRequest, &NavPath);
+		TArray<FNavPathPoint>& PathPoints = NavPath->GetPathPoints();
+		for (auto& Point : PathPoints)
+		{
+			const FVector& Location = Point.Location;
+			DrawDebugSphere(GetWorld(), Location, 12.f, 12, FColor::Green, false, 10.f);
+		}
+	}*/
 }
 
 void AEnemy::Tick(float DeltaTime)
@@ -55,8 +80,7 @@ void AEnemy::Tick(float DeltaTime)
 	//Calculate between enemy and combat target
 	if (CombatTarget)
 	{
-		const double DistanceToTarget = (CombatTarget->GetActorLocation() - GetActorLocation()).Size();
-		if (DistanceToTarget > CombatRadius)
+		if (!InTargetRange(CombatTarget, CombarRadius))
 		{
 			CombatTarget = nullptr;
 			if (HealthBarWidget)
@@ -65,6 +89,41 @@ void AEnemy::Tick(float DeltaTime)
 			}
 		}
 	}
+
+	/*if (PatrolTarget && EnemyController)
+	{
+		if (InTargetRange(PatrolTarget, PatrolRadius))
+		{
+			TArray<AActor*> ValidTargets;
+			for (auto Target : PatrolTargets)
+			{
+				if (Target != PatrolTarget)
+				{
+					ValidTargets.AddUnique(Target);
+				}
+			}
+
+			const int32 PatrolTargetNum = ValidTargets.Num();
+			const int32 TargetSelection = FMath::RandRange(0, NumPatrolTargets - 1);
+
+			if (PatrolTargetNum > 0)
+			{
+				AActor* Target = ValidTargets[TargetSelection];
+				PatrolTarget = Target;
+
+				FAIMoveRequest MoveRequest;
+				MoveRequest.SetGoalActor(PatrolTarget);
+				MoveRequest.SetAcceptanceRadius(PatrolRadius);
+				EnemyController->MoveTo(MoveRequest);
+			}
+		}
+	}*/
+}
+
+bool AEnemy::InTargetRange(AActor* Target, double Radius)
+{
+	const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
+	return DistanceToTarget <= Radius;
 }
 
 void AEnemy::Die()
