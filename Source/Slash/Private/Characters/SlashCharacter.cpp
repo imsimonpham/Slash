@@ -43,6 +43,14 @@ ASlashCharacter::ASlashCharacter()
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
+void ASlashCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//Add Tag
+	Tags.Add(FName("SlashCharacter"));
+}
+
 #pragma region Movement and Look
 void ASlashCharacter::MoveForward(float Value)
 {

@@ -30,7 +30,7 @@ public:
 
 	
 protected:
-	/*virtual void BeginPlay() override;*/
+	virtual void BeginPlay() override;
 
 	// Callbacks for input
 	void MoveForward(float Value);
