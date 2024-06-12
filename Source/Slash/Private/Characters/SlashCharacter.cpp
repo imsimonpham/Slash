@@ -208,15 +208,6 @@ void ASlashCharacter::FinishArmingOrDisarming()
 	ActionState = EActionState::EAS_Unoccupied;
 }
 
-void ASlashCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled)
-{
-	if (EquippedWeapon && EquippedWeapon->GetWeaponBox())
-	{
-		EquippedWeapon->GetWeaponBox()->SetCollisionEnabled(CollisionEnabled);
-		EquippedWeapon->IgnoredActors.Empty();
-	}
-}
-
 #pragma endregion Equip and Attack
 
 void ASlashCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

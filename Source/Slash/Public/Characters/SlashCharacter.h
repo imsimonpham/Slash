@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "BaseCharacter.h"
 #include "CharacterTypes.h"
 #include "SlashCharacter.generated.h"
 
@@ -12,10 +12,9 @@ class USpringArmComponent;
 class UCameraComponent;
 class AItem;
 class UAnimMontage;
-class AWeapon;
 
 UCLASS()
-class SLASH_API ASlashCharacter : public ACharacter
+class SLASH_API ASlashCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
@@ -24,11 +23,6 @@ public:
 	/*virtual void Tick(float DeltaTime) override;*/
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//weapon collision
-	UFUNCTION(BlueprintCallable)
-	void SetWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
-
-	
 protected:
 	virtual void BeginPlay() override;
 
@@ -38,16 +32,14 @@ protected:
 	void Turn(float Value);
 	void LookUp(float Value);
 	void EKeyPressed();
-	void Attack();
+	virtual void Attack() override;
 	
-	//Play Montage functions
-	void PlayAttackMontage();
+	//Play Montage functions 
+	virtual void PlayAttackMontage() override;
 	void PlayArmingMontage(const FName& SectionName);
+	virtual void AttackEnd() override;
+	virtual bool CanAttack() override;
 
-	UFUNCTION(BlueprintCallable)
-	void AttackEnd();
-
-	bool CanAttack();
 	bool CanUnarm();
 	bool CanArm();
 
@@ -77,13 +69,7 @@ private:
 
 	//Animation Montages
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
-	UAnimMontage* AttackMontage;
-
-	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* EquipMontage;
-
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	AWeapon* EquippedWeapon;
 
 public: 
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
