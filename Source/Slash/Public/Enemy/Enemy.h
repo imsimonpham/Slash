@@ -10,6 +10,7 @@
 class UHealthBarComponent;
 class AAIController;
 class UPawnSensingComponent;
+class AWeapon;
 
 UCLASS()
 class SLASH_API AEnemy : public ABaseCharacter
@@ -20,16 +21,12 @@ public:
 	AEnemy();
 
 	virtual void Tick(float DeltaTime) override;
-
 	void CheckPatrolTarget();
-
 	void CheckCombatTarget();
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override; //->put to base class
-
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override; //->put to base class
+	virtual void Destroyed() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,6 +47,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UPawnSensingComponent* PawnSensing;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AWeapon> WeaponClass;
 
 	//Combat and Attack
 	UPROPERTY()
