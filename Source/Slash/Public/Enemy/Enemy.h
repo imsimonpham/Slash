@@ -30,6 +30,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Attack() override;
+	virtual void PlayAttackMontage() override;
 	virtual void Die() override; 
 	bool InTargetRange(AActor* Target, double Radius);
 	void MoveToTarget(AActor* Target);

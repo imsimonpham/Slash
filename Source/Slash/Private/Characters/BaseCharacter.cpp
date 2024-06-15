@@ -20,10 +20,7 @@ void ABaseCharacter::BeginPlay()
 	
 }
 
-void ABaseCharacter::Attack()
-{
-
-}
+void ABaseCharacter::Attack(){}
 
 void ABaseCharacter::Die()
 {
@@ -39,9 +36,7 @@ void ABaseCharacter::AttackEnd()
 
 }
 
-void ABaseCharacter::PlayAttackMontage()
-{
-}
+void ABaseCharacter::PlayAttackMontage(){}
 
 void ABaseCharacter::PlayHitReactMontage(const FName& SectionName)
 {

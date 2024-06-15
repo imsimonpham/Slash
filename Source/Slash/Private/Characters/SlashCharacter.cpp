@@ -125,6 +125,7 @@ void ASlashCharacter::EKeyPressed()
 
 void ASlashCharacter::Attack()
 {
+	Super::Attack();
 	if (CanAttack())
 	{
 		PlayAttackMontage();
@@ -134,6 +135,7 @@ void ASlashCharacter::Attack()
 
 void ASlashCharacter::PlayAttackMontage()
 {
+	Super::PlayAttackMontage();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && AttackMontage)
 	{
@@ -143,7 +145,7 @@ void ASlashCharacter::PlayAttackMontage()
 		switch (Selection)
 		{
 		case 0:
-			SelectionName = FName("Attack");
+			SelectionName = FName("Attack1");
 			break;
 		case 1:
 			SelectionName = FName("Attack2");
